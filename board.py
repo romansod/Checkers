@@ -40,6 +40,9 @@ class Board:
     def getPosition(self,x,y):
         return self.grid[x][y]
 
+    def setPosition(self,x,y,occupant):
+        self.grid[x][y] = occupant
+
     def isBlackPiece(self,x,y):
         return self.getPosition(x,y) == Occupant.BLACK
 
