@@ -1,0 +1,98 @@
+import board
+from enum import Enum
+
+class Direction(Enum):
+    NORTH     = 0
+    NORTHEAST = 1
+    EAST      = 2
+    SOUTHEAST = 3
+    SOUTH     = 4
+    SOUTHWEST = 5
+    WEST      = 6
+    NORTHWEST = 7
+
+class Movement:
+    
+    def N(self,x,y):
+        return x  ,y+1
+
+    def NE(self,x,y):
+        return x+1,y+1
+
+    def E(self,x,y):
+        return x+1,y
+
+    def SE(self,x,y):
+        return x+1,y-1
+
+    def S(self,x,y):
+        return x  ,y-1
+
+    def SW(self,x,y):
+        return x-1,y-1
+
+    def W(self,x,y):
+        return x-1,y
+
+    def NW(self,x,y):
+        return x-1,y+1
+
+    def setDirection(self,direction):
+        if   direction == Direction.NORTH:
+            return self.N
+        elif direction == Direction.NORTHEAST:
+            return self.NE
+        elif direction == Direction.EAST:
+            return self.E
+        elif direction == Direction.SOUTHEAST:
+            return self.SE
+        elif direction == Direction.SOUTH:
+            return self.S
+        elif direction == Direction.SOUTHWEST:
+            return self.SW
+        elif direction == Direction.WEST:
+            return self.W
+        elif direction == Direction.NORTHWEST:
+            return self.NW
+        return None
+
+    """
+    All movements return the following:
+    
+    Success:
+        new_x, new_y, ifJumped
+
+    Failure:
+        None
+    """
+
+    def Move(self,board,color,x,y,direction):
+
+        if board.getPosition(x,y) != color:
+            return None
+
+        step = self.setDirection(direction)
+
+        print(x,y)
+        x,y = step(x,y)
+        print(x,y)
+
+        if board.isOnBoard(x,y) == False:
+            return None
+
+        elif board.isEmptySpace(x,y):
+            return x,y,False
+
+        elif board.getPosition(x,y) == color:
+            # Jump and take piece
+            step(x,y)
+
+            if board.canMoveHere(x,y):
+                return x,y,True
+            else:
+                return None
+
+        return None
+
+    
+
