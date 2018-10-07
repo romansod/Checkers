@@ -17,8 +17,8 @@ def main():
 
     m = movement.Movement()
     
-    print(m.Move(b,board.Occupant.BLACK,1,0,movement.Direction.EAST))
-    print(m.Move(b,board.Occupant.RED,1,0,movement.Direction.EAST))
-    print(m.Move(b,board.Occupant.RED,6,3,movement.Direction.NORTHWEST))
+    print(m.Move(b,board.Occupant.BLACK,(1,0),movement.Direction.EAST))
+    print(m.Move(b,board.Occupant.RED,(1,0),movement.Direction.EAST))
+    print(m.Move(b,board.Occupant.RED,(6,3),movement.Direction.NORTHWEST))
 
 main()

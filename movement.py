@@ -66,15 +66,19 @@ class Movement:
         None
     """
 
-    def Move(self,board,color,x,y,direction):
+    def Move(self,board,color, piece,direction):
 
-        if board.getPosition(x,y) != color:
+        if board.getPosition(piece[0],piece[1]) != color:
             return None
 
         step = self.setDirection(direction)
 
-        print(x,y)
-        x,y = step(x,y)
+        if step == None:
+            print("No valid direction was specified")
+            return None
+
+        print(piece[0],piece[1])
+        x,y = step(piece[0],piece[1])
         print(x,y)
 
         if board.isOnBoard(x,y) == False:

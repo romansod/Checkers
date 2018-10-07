@@ -5,9 +5,9 @@ from colorama import Fore, Style, Back
 from enum import Enum
 
 class Occupant(Enum):
-    SPACE = 0
-    BLACK = 1
-    RED   = 2
+    BLACK = 0
+    RED   = 1
+    SPACE = 2
 
 PIECE = 'O'
 
