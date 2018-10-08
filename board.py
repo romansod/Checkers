@@ -19,11 +19,19 @@ class Board:
         self.width  = 8
         self.grid   = [[Occupant.SPACE]*self.length for i in range(self.width)]
 
+        put_piece = False
         for y in range(self.length):
-            for x in range(2):
-                self.grid[x][y] = Occupant.BLACK
-            for x in range(6,8):
-                self.grid[x][y] = Occupant.RED
+            for x in range(3):
+                if put_piece:
+                    self.grid[x][y] = Occupant.BLACK
+                put_piece^=1
+
+        put_piece = True
+        for y in range(self.length):    
+            for x in range(5,8):
+                if put_piece:
+                    self.grid[x][y] = Occupant.RED
+                put_piece^=1
 
     def isValidX(self,x):
         return 0 <= x and x < self.width 
