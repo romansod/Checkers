@@ -24,8 +24,9 @@ def main():
     player1 = 'Roman'
     player2 = 'Lola'
     g = game.Game(board.Board(),player1,player2)
-    g.getBoard().print_board()
-    g.takeTurn()
-    g.getBoard().print_board()
+    while True:
+        g.getBoard().print_board()
+        g.takeTurn()
+
 
 main()

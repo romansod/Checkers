@@ -8,7 +8,7 @@ class Game:
         self.redp   = redPlayer
         self.blkp   = blackPlayer
         self.board  = board
-        self.player = Occupant.RED
+        self.player = Occupant.BLACK
 
     def getBoard(self):
         return self.board
@@ -81,7 +81,12 @@ class Game:
     def resolve_turn_done(self, piece, move_xyj):
         self.board.setPosition(piece[0],piece[1],Occupant.SPACE)
         self.board.setPosition(move_xyj[0],move_xyj[1],self.player)
-        return move_xyj == False
+        jumped = move_xyj[2]
+        if jumped:
+            print("JUMPED: ",jumped)
+            self.board.setPosition(jumped[0],jumped[1],Occupant.SPACE)
+            return True
+        return False
 
     def takeTurn(self):
         # Print Playername or color
@@ -105,7 +110,8 @@ class Game:
             # Resolve consequences of turn
             if self.resolve_turn_done(piece, move_xyj):
                 # If enemy piece claimed, prompt for another move or none
-                piece, _ = move_xyj
+                piece = move_xyj[0:2]
+                continue    
             
             # Alternate player and return
             self.alternateTurn()

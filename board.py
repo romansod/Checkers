@@ -5,9 +5,12 @@ from colorama import Fore, Style, Back
 from enum import Enum
 
 class Occupant(Enum):
-    BLACK = 0
-    RED   = 1
-    SPACE = 2
+    SPACE   = 0
+    BLACK   = 1
+    RED     = 2
+    BLACK_K = 3
+    RED_K   = 4
+    
 
 PIECE = 'O'
 
@@ -52,17 +55,28 @@ class Board:
         self.grid[x][y] = occupant
 
     def isBlackPiece(self,x,y):
-        return self.getPosition(x,y) == Occupant.BLACK
+        p = self.getPosition(x,y)
+        return p == Occupant.BLACK or p == Occupant.BLACK_K
 
     def isRedPiece(self,x,y):
-        return self.getPosition(x,y) == Occupant.RED
+        p = self.getPosition(x,y)
+        return p == Occupant.RED or p == Occupant.RED_K
+
+    def isSameColor(self,color1,color2):
+        if color1 == Occupant.SPACE or color2 == Occupant.SPACE:
+            return False
+        return (color1.value % 2) == (color2.value % 2)
 
     def isValidPieceSelection(self,color,x,y):
         if not self.isOnBoard(x,y):
             print('\nThat is not a valid board position\n')
             return False
 
-        if self.getPosition(x,y) != color:
+        if self.isEmptySpace(x,y):
+            print('\nThere is no piece at that board position\n')
+            return False
+        p = self.getPosition(x,y)
+        if self.isSameColor(p,color) == False:
             print('\nYou must select one of your pieces\n')
             return False
 

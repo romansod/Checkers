@@ -66,9 +66,9 @@ class Movement:
         None
     """
 
-    def Move(self,board,color, piece,direction):
-
-        if board.getPosition(piece[0],piece[1]) != color:
+    def Move(self,board,color,piece,direction):
+        p = board.getPosition(piece[0],piece[1])
+        if board.isSameColor(p,color) == False:
             return None
 
         step = self.setDirection(direction)
@@ -84,15 +84,17 @@ class Movement:
         if board.isOnBoard(x,y) == False:
             return None
 
-        elif board.isEmptySpace(x,y):
+        if board.isEmptySpace(x,y):
             return x,y,False
 
-        elif board.getPosition(x,y) == color:
-            # Jump and take piece
-            step(x,y)
+        np = board.getPosition(x,y)
 
-            if board.canMoveHere(x,y):
-                return x,y,True
+        if board.isSameColor(np,color) == False:
+            # Jump and take piece
+            nx,ny = step(x,y)
+
+            if board.canMoveHere(nx,ny):
+                return nx,ny,(x,y)
             else:
                 return None
 
