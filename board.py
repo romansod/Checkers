@@ -90,8 +90,8 @@ class Board:
 
     def print_board(self):
         space_color = True
-        for y in range(self.length):
-            self.print_space()
+        for y in range(self.length-1,-1,-1):
+            print(" ", y, end=' ')
 
             for x in range(self.width):
                 self.set_space(space_color)
@@ -101,6 +101,12 @@ class Board:
             space_color ^= 1
             print(Style.RESET_ALL)
 
+        self.print_space()
+        print(end='  ')
+        for i in range(self.width):
+            print(i, end='  ')
+
+        print()
     
 
 
