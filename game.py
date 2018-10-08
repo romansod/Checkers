@@ -13,6 +13,7 @@ class Game:
     def getBoard(self):
         return self.board
 
+    # Change who's turn it is
     def alternateTurn(self):
         if self.player == Occupant.RED:
             self.player = Occupant.BLACK
@@ -24,7 +25,7 @@ class Game:
         if self.player == Occupant.RED:
             player_name = "\n--- RED PLAYER " + self.redp
         elif self.player == Occupant.BLACK:
-            player_name = "\n- BLACK PLAYER" + self.blkp
+            player_name = "\n- BLACK PLAYER " + self.blkp
         else:
             player_name = "\ngame.py:print_player():invalid player\n"
 
@@ -41,6 +42,7 @@ class Game:
             else:
                 print("That is not one of your pieces, please try again\n")
 
+    # Parse input
     def input_direction(self,direction):
         if   direction == 'N':
             return Direction.NORTH
@@ -68,9 +70,10 @@ class Game:
             move = self.input_direction(move)
 
             # Success:
-            #      new_x, new_y, ifJumped
+            #      new_x, new_y, (ifJumpedx, ifJumpedy) or False
             #  Failure:
             #      None
+
             move_r = m.Move(self.board, self.player, piece, move)
 
             if move_r:
@@ -79,9 +82,12 @@ class Game:
             print("Try moving piece <", piece,"> again")
 
     def resolve_turn_done(self, piece, move_xyj):
+        # Remove players piece from original position and place it at new position
         self.board.setPosition(piece[0],piece[1],Occupant.SPACE)
         self.board.setPosition(move_xyj[0],move_xyj[1],self.player)
+
         jumped = move_xyj[2]
+        # If an enemy piece was jumped, remove that piece and inform caller
         if jumped:
             print("JUMPED: ",jumped)
             self.board.setPosition(jumped[0],jumped[1],Occupant.SPACE)
@@ -89,7 +95,7 @@ class Game:
         return False
 
     def takeTurn(self):
-        # Print Playername or color
+        # Print Playername and color
         self.print_player()
 
         # Prompt for piece selection

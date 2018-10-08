@@ -21,7 +21,9 @@ class Board:
         self.length = 8
         self.width  = 8
         self.grid   = [[Occupant.SPACE]*self.length for i in range(self.width)]
+        # Grid is set to empty when initialized
 
+        # Initialize Black pieces
         put_piece = False
         for y in range(self.length):
             for x in range(3):
@@ -29,6 +31,7 @@ class Board:
                     self.grid[x][y] = Occupant.BLACK
                 put_piece^=1
 
+        # Initialize Red Pieces
         put_piece = True
         for y in range(self.length):    
             for x in range(5,8):
@@ -36,6 +39,7 @@ class Board:
                     self.grid[x][y] = Occupant.RED
                 put_piece^=1
 
+    # Check validity of coordinates
     def isValidX(self,x):
         return 0 <= x and x < self.width 
 
@@ -45,22 +49,22 @@ class Board:
     def isOnBoard(self,x,y):
         return self.isValidX(x) and self.isValidY(y)
 
-    def isEmptySpace(self,x,y):
-        return self.getPosition(x,y) == Occupant.SPACE
-
+    # Get and set what exists(if anything) at x y position
     def getPosition(self,x,y):
         return self.grid[x][y]
 
     def setPosition(self,x,y,occupant):
         self.grid[x][y] = occupant
 
+    # Evaluate the board at position x y
+    def isEmptySpace(self,x,y):
+        return self.getPosition(x,y) == Occupant.SPACE
+
     def isBlackPiece(self,x,y):
-        p = self.getPosition(x,y)
-        return p == Occupant.BLACK or p == Occupant.BLACK_K
+        return self.isSameColor(self.getPosition(x,y),Occupant.BLACK)
 
     def isRedPiece(self,x,y):
-        p = self.getPosition(x,y)
-        return p == Occupant.RED or p == Occupant.RED_K
+        return self.isSameColor(self.getPosition(x,y),Occupant.RED)
 
     def isSameColor(self,color1,color2):
         if color1 == Occupant.SPACE or color2 == Occupant.SPACE:
@@ -104,12 +108,14 @@ class Board:
 
         print(Fore.RESET, end='')
 
+    # Sets the alternating space color
     def set_space(self, color_black):
         if color_black:
             print(Back.BLACK, end='')
         else:
             print(Back.RED, end='')
 
+    # Prints the board and pieces
     def print_board(self):
         space_color = True
         for y in range(self.length-1,-1,-1):
