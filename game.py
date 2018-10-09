@@ -9,22 +9,23 @@ class Game:
         self.blkp   = blackPlayer
         self.board  = board
         self.player = Occupant.BLACK
+        self.movem  = movement.Movement()
 
     def getBoard(self):
         return self.board
 
     # Change who's turn it is
     def alternateTurn(self):
-        if self.player == Occupant.RED:
+        if self.board.isSameColor(self.player,Occupant.RED):
             self.player = Occupant.BLACK
         else:
             self.player = Occupant.RED
 
     def print_player(self):
         player_name = ""
-        if self.player == Occupant.RED:
+        if self.board.isSameColor(self.player,Occupant.RED):
             player_name = "\n--- RED PLAYER " + self.redp
-        elif self.player == Occupant.BLACK:
+        elif self.board.isSameColor(self.player,Occupant.BLACK):
             player_name = "\n- BLACK PLAYER " + self.blkp
         else:
             player_name = "\ngame.py:print_player():invalid player\n"
@@ -38,9 +39,12 @@ class Game:
             y = int(input("y: "))
 
             if self.board.isValidPieceSelection(self.player,x,y):
-                return x,y
-            else:
-                print("That is not one of your pieces, please try again\n")
+                pos = self.board.getPosition(x,y)
+                v_directions = self.movem.getValidMoves(self.board,(x,y),pos)
+                if len(v_directions) > 0:
+                    return (x,y),v_directions
+
+            print("That is not one of your pieces, please try again\n")
 
     # Parse input
     def input_direction(self,direction):
@@ -62,9 +66,7 @@ class Game:
             return Direction.NORTHWEST
         return None
 
-    def prompt_movement(self,piece):
-        m = movement.Movement()
-
+    def prompt_movement(self,piece,v_directions):
         while True:
             move = input("Select a direction of movement (N, NE, E ... etc):")
             move = self.input_direction(move)
@@ -73,23 +75,23 @@ class Game:
             #      new_x, new_y, (ifJumpedx, ifJumpedy) or False
             #  Failure:
             #      None
+            if move in v_directions:
+                move_r = self.movem.Move(self.board, self.player, piece, move)
 
-            move_r = m.Move(self.board, self.player, piece, move)
-
-            if move_r:
-                return move_r
+                if move_r:
+                    return move_r
                 
             print("Try moving piece <", piece,"> again")
 
     def resolve_turn_done(self, piece, move_xyj):
-        # Remove players piece from original position and place it at new position
+        # Place piece at new position and remove from older position
+        self.board.setPosition(move_xyj[0],move_xyj[1],self.board.getPosition(piece[0],piece[1]))
         self.board.setPosition(piece[0],piece[1],Occupant.SPACE)
-        self.board.setPosition(move_xyj[0],move_xyj[1],self.player)
 
         jumped = move_xyj[2]
+
         # If an enemy piece was jumped, remove that piece and inform caller
         if jumped:
-            print("JUMPED: ",jumped)
             self.board.setPosition(jumped[0],jumped[1],Occupant.SPACE)
             return True
         return False
@@ -100,24 +102,28 @@ class Game:
 
         # Prompt for piece selection
         while True:
-            piece = self.prompt_piece()
+            piece,v_directions = self.prompt_piece()
             if piece != None:
                 break
             # TODO check if any valid moves for this piece
             print("prompt_piece: Something went wrong")
         
+        pos = self.board.getPosition(piece[0],piece[1])
         # Prompt for movement
         while True:
-            move_xyj = self.prompt_movement(piece)
+            move_xyj = self.prompt_movement(piece,v_directions)
             if move_xyj == None:
                 print("prompt_movement: Something went wrong")
                 continue
                 
             # Resolve consequences of turn
             if self.resolve_turn_done(piece, move_xyj):
-                # If enemy piece claimed, prompt for another move or none
-                piece = move_xyj[0:2]
-                continue    
+                # If enemy piece claimed, prompt for another move if any moves available
+                v_directions = self.movem.getValidMoves(self.board,piece,pos)
+                if len(v_directions) > 0:
+                    piece = move_xyj[0:2]
+                    self.board.print_board()
+                    continue    
             
             # Alternate player and return
             self.alternateTurn()

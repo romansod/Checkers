@@ -1,5 +1,6 @@
 import board
 from enum import Enum
+from board import Occupant
 
 class Direction(Enum):
     NORTH     = 0
@@ -10,6 +11,10 @@ class Direction(Enum):
     SOUTHWEST = 5
     WEST      = 6
     NORTHWEST = 7
+
+red   = {Direction.NORTHWEST,Direction.SOUTHWEST}
+black = {Direction.NORTHEAST,Direction.SOUTHEAST}
+king  = {Direction.EAST,Direction.WEST}
 
 class Movement:
     
@@ -56,6 +61,36 @@ class Movement:
             return self.NW
         return None
 
+
+    def move_set(self,board,color):
+        if board.isSameColor(color,Occupant.RED):
+            if color == Occupant.RED_K:
+                return red.union(king)
+            return red
+        elif board.isSameColor(color,Occupant.BLACK):
+            if color == Occupant.BLACK_K:
+                return black.union(king)
+            return black
+            
+    def getValidMoves(self,board,piece,color):
+        all_moves = self.move_set(board,color)
+        actual_moves = set()
+        for d in all_moves:
+            step = self.setDirection(d)
+            x,y = step(piece[0],piece[1])
+            
+            if board.isOnBoard(x,y):
+                pos = board.getPosition(x,y)
+                if pos == Occupant.SPACE:
+                    actual_moves.add(d)
+                    continue
+                if board.isSameColor(color,pos) == False:
+                    x,y = step(x,y)
+                    if board.canMoveHere(x,y):
+                        actual_moves.add(d)
+                        continue
+        return actual_moves
+
     """
     All movements return the following:
     
@@ -83,11 +118,9 @@ class Movement:
 
         if board.isOnBoard(x,y) == False:
             return None
-
-        if board.isEmptySpace(x,y):
-            return x,y,False
-
         np = board.getPosition(x,y)
+        if board.isEmptySpace(np):
+            return x,y,False
 
         if board.isSameColor(np,color) == False:
             # Jump and take piece

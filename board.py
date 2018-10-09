@@ -57,14 +57,14 @@ class Board:
         self.grid[x][y] = occupant
 
     # Evaluate the board at position x y
-    def isEmptySpace(self,x,y):
-        return self.getPosition(x,y) == Occupant.SPACE
+    def isEmptySpace(self,pos):
+        return pos == Occupant.SPACE
 
-    def isBlackPiece(self,x,y):
-        return self.isSameColor(self.getPosition(x,y),Occupant.BLACK)
+    def isBlackPiece(self,pos):
+        return self.isSameColor(pos,Occupant.BLACK)
 
-    def isRedPiece(self,x,y):
-        return self.isSameColor(self.getPosition(x,y),Occupant.RED)
+    def isRedPiece(self,pos):
+        return self.isSameColor(pos,Occupant.RED)
 
     def isSameColor(self,color1,color2):
         if color1 == Occupant.SPACE or color2 == Occupant.SPACE:
@@ -75,11 +75,10 @@ class Board:
         if not self.isOnBoard(x,y):
             print('\nThat is not a valid board position\n')
             return False
-
-        if self.isEmptySpace(x,y):
+        p = self.getPosition(x,y)
+        if self.isEmptySpace(p):
             print('\nThere is no piece at that board position\n')
             return False
-        p = self.getPosition(x,y)
         if self.isSameColor(p,color) == False:
             print('\nYou must select one of your pieces\n')
             return False
@@ -87,7 +86,7 @@ class Board:
         return True
 
     def canMoveHere(self,x,y):
-        return self.isOnBoard(x,y) and self.isEmptySpace(x,y)
+        return self.isOnBoard(x,y) and self.isEmptySpace(self.getPosition(x,y))
     
     # Printing functions
 
@@ -95,12 +94,13 @@ class Board:
         print('   ', end='')
 
     def print_elem(self,x,y):
+        pos = self.getPosition(x,y)
         print(Style.BRIGHT,end='')
-        if self.isBlackPiece(x,y):
+        if self.isBlackPiece(pos):
             print(Fore.BLACK, end=' ')
             print(PIECE, end=' ')
 
-        elif self.isRedPiece(x,y):
+        elif self.isRedPiece(pos):
             print(Fore.RED, end=' ')
             print(PIECE, end=' ')
         else:
